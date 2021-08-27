@@ -1,0 +1,7 @@
+name: wirecard
+description: Wirecard integration helper
+version: 0.0.1
+homepage: https://github.com/davidsdearaujo/wirecard
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
