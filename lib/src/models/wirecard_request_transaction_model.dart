@@ -90,8 +90,17 @@ class WirecardRequestTransactionModel {
   }
 
   String toJson() => json.encode(toMap());
-
   factory WirecardRequestTransactionModel.fromJson(String source) => WirecardRequestTransactionModel.fromMap(json.decode(source));
+
+  String toQuery() => toMap().entries.where((e) => e.value != null).map((e) => '${e.key}=${e.value}').join('&');
+  factory WirecardRequestTransactionModel.fromQuery(String source) => WirecardRequestTransactionModel.fromMap(
+        Map.fromEntries(
+          source.split('&').map((value) {
+            final splittedValues = value.split('=');
+            return MapEntry(splittedValues.first, splittedValues.last);
+          }),
+        ),
+      );
 
   @override
   String toString() {

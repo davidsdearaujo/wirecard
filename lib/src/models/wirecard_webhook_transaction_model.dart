@@ -136,8 +136,17 @@ class WirecardWebhookTransactionModel {
   }
 
   String toJson() => json.encode(toMap());
-
   factory WirecardWebhookTransactionModel.fromJson(String source) => WirecardWebhookTransactionModel.fromMap(json.decode(source));
+
+  String toQuery() => toMap().entries.where((e) => e.value != null).map((e) => '${e.key}=${e.value}').join('&');
+  factory WirecardWebhookTransactionModel.fromQuery(String source) => WirecardWebhookTransactionModel.fromMap(
+        Map.fromEntries(
+          source.split('&').map((value) {
+            final splittedValues = value.split('=');
+            return MapEntry(splittedValues.first, splittedValues.last);
+          }),
+        ),
+      );
 
   @override
   String toString() {
