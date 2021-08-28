@@ -125,19 +125,19 @@ class WirecardPagadorModel {
     return WirecardPagadorModel(
       nome: map['pagador_nome'],
       email: map['pagador_email'],
-      telefone: map['pagador_telefone'],
+      telefone: map['pagador_telefone'] is String ? int.parse(map['pagador_telefone']) : map['pagador_telefone'],
       logradouro: map['pagador_logradouro'],
-      numero: map['pagador_numero'],
+      numero: map['pagador_numero'] is String ? int.parse(map['pagador_numero']) : map['pagador_numero'],
       complemento: map['pagador_complemento'],
       bairro: map['pagador_bairro'],
-      cep: map['pagador_cep'],
+      cep: map['pagador_cep'] is String ? int.parse(map['pagador_cep']) : map['pagador_cep'],
       cidade: map['pagador_cidade'],
       estado: map['pagador_estado'],
       pais: map['pagador_pais'],
-      cpf: map['pagador_cpf'],
-      celular: map['pagador_celular'],
+      cpf: map['pagador_cpf'] is String ? int.parse(map['pagador_cpf']) : map['pagador_cpf'],
+      celular: map['pagador_celular'] is String ? int.parse(map['pagador_celular']) : map['pagador_celular'],
       sexo: PagadorSexoEnumType.fromMap(map['pagador_sexo']),
-      dataNascimento: map['pagador_data_nascimento'],
+      dataNascimento: map['pagador_data_nascimento'] is String ? int.parse(map['pagador_data_nascimento']) : map['pagador_data_nascimento'],
     );
   }
 
@@ -145,14 +145,13 @@ class WirecardPagadorModel {
   factory WirecardPagadorModel.fromJson(String source) => WirecardPagadorModel.fromMap(json.decode(source));
 
   String toQuery() => toMap().entries.where((e) => e.value != null).map((e) => '${e.key}=${e.value}').join('&');
-  factory WirecardPagadorModel.fromQuery(String source) => WirecardPagadorModel.fromMap(
-        Map.fromEntries(
-          source.split('&').map((value) {
-            final splittedValues = value.split('=');
-            return MapEntry(splittedValues.first, splittedValues.last);
-          }),
-        ),
-      );
+  factory WirecardPagadorModel.fromQuery(String source) {
+    final entries = source.split('&').map((value) {
+      final splittedValues = value.split('=');
+      return MapEntry<String, dynamic>(splittedValues.first, splittedValues.last);
+    });
+    return WirecardPagadorModel.fromMap(Map.fromEntries(entries));
+  }
 
   @override
   String toString() {
@@ -162,41 +161,41 @@ class WirecardPagadorModel {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is WirecardPagadorModel &&
-      other.nome == nome &&
-      other.email == email &&
-      other.telefone == telefone &&
-      other.logradouro == logradouro &&
-      other.numero == numero &&
-      other.complemento == complemento &&
-      other.bairro == bairro &&
-      other.cep == cep &&
-      other.cidade == cidade &&
-      other.estado == estado &&
-      other.pais == pais &&
-      other.cpf == cpf &&
-      other.celular == celular &&
-      other.sexo == sexo &&
-      other.dataNascimento == dataNascimento;
+        other.nome == nome &&
+        other.email == email &&
+        other.telefone == telefone &&
+        other.logradouro == logradouro &&
+        other.numero == numero &&
+        other.complemento == complemento &&
+        other.bairro == bairro &&
+        other.cep == cep &&
+        other.cidade == cidade &&
+        other.estado == estado &&
+        other.pais == pais &&
+        other.cpf == cpf &&
+        other.celular == celular &&
+        other.sexo == sexo &&
+        other.dataNascimento == dataNascimento;
   }
 
   @override
   int get hashCode {
     return nome.hashCode ^
-      email.hashCode ^
-      telefone.hashCode ^
-      logradouro.hashCode ^
-      numero.hashCode ^
-      complemento.hashCode ^
-      bairro.hashCode ^
-      cep.hashCode ^
-      cidade.hashCode ^
-      estado.hashCode ^
-      pais.hashCode ^
-      cpf.hashCode ^
-      celular.hashCode ^
-      sexo.hashCode ^
-      dataNascimento.hashCode;
+        email.hashCode ^
+        telefone.hashCode ^
+        logradouro.hashCode ^
+        numero.hashCode ^
+        complemento.hashCode ^
+        bairro.hashCode ^
+        cep.hashCode ^
+        cidade.hashCode ^
+        estado.hashCode ^
+        pais.hashCode ^
+        cpf.hashCode ^
+        celular.hashCode ^
+        sexo.hashCode ^
+        dataNascimento.hashCode;
   }
 }

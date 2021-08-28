@@ -80,12 +80,12 @@ class WirecardRequestTransactionModel {
   factory WirecardRequestTransactionModel.fromMap(Map<String, dynamic> map) {
     return WirecardRequestTransactionModel(
       idCarteira: map['id_carteira'],
-      valor: map['valor'],
+      valor: map['valor'] is String ? int.parse(map['valor']) : map['valor'],
       nome: map['nome'],
       descricao: map['descricao'],
       idTransacao: UuidModel.fromMap(map['id_transacao']),
-      frete: map['frete'],
-      pesoCompra: map['peso_compra'],
+      frete: map['frete'] is String ? int.parse(map['frete']) : map['frete'],
+      pesoCompra: map['peso_compra'] is String ? int.parse(map['peso_compra']) : map['peso_compra'],
       pagador: WirecardPagadorModel.fromMap(map),
     );
   }
@@ -94,14 +94,13 @@ class WirecardRequestTransactionModel {
   factory WirecardRequestTransactionModel.fromJson(String source) => WirecardRequestTransactionModel.fromMap(json.decode(source));
 
   String toQuery() => toMap().entries.where((e) => e.value != null).map((e) => '${e.key}=${e.value}').join('&');
-  factory WirecardRequestTransactionModel.fromQuery(String source) => WirecardRequestTransactionModel.fromMap(
-        Map.fromEntries(
-          source.split('&').map((value) {
-            final splittedValues = value.split('=');
-            return MapEntry(splittedValues.first, splittedValues.last);
-          }),
-        ),
-      );
+  factory WirecardRequestTransactionModel.fromQuery(String source) {
+    final entries = source.split('&').map((value) {
+      final splittedValues = value.split('=');
+      return MapEntry<String, dynamic>(splittedValues.first, splittedValues.last);
+    });
+    return WirecardRequestTransactionModel.fromMap(Map.fromEntries(entries));
+  }
 
   @override
   String toString() {

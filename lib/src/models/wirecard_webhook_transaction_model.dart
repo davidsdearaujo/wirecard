@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:wirecard/wirecard.dart';
+
 import '../enums/status_pagamento_enum.dart';
 import '../enums/tipo_pagamento_enum.dart';
 
@@ -8,7 +10,7 @@ export '../enums/tipo_pagamento_enum.dart';
 
 class WirecardWebhookTransactionModel {
   ///### Identificador da transação informado por você para controle em seu site
-  final String? idTransacao;
+  final UuidModel? idTransacao;
 
   ///### Valor do pagamento, sem vírgulas, com casas decimais
   ///
@@ -92,7 +94,7 @@ class WirecardWebhookTransactionModel {
   });
 
   WirecardWebhookTransactionModel copyWith({
-    String? idTransacao,
+    UuidModel? idTransacao,
     int? valor,
     int? statusPagamento,
     int? codMoip,
@@ -113,7 +115,7 @@ class WirecardWebhookTransactionModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'id_transacao': idTransacao?.replaceAll('-', ''),
+      'id_transacao': idTransacao?.toMap(),
       'valor': valor,
       'status_pagamento': statusPagamento,
       'cod_moip': codMoip,
@@ -124,22 +126,14 @@ class WirecardWebhookTransactionModel {
   }
 
   factory WirecardWebhookTransactionModel.fromMap(Map<String, dynamic> map) {
-    String? idTransacao;
-    if (map.containsKey('id_transacao')) {
-      final parts = <String>[];
-      parts.add(map['id_transacao'].substring(0, 8));
-      parts.add(map['id_transacao'].substring(8, 12));
-      parts.add(map['id_transacao'].substring(12, 16));
-      parts.add(map['id_transacao'].substring(16));
-      idTransacao = parts.join('-');
-    }
+    UuidModel? idTransacao = map.containsKey('id_transacao') ? UuidModel.fromMap(map['id_transacao']) : null;
 
     return WirecardWebhookTransactionModel(
       idTransacao: idTransacao,
-      valor: map['valor'],
-      statusPagamento: map['status_pagamento'],
-      codMoip: map['cod_moip'],
-      formaPagamento: map['forma_pagamento'],
+      valor: map['valor'] is String ? int.parse(map['valor']) : map['valor'],
+      statusPagamento: map['status_pagamento'] is String ? int.parse(map['status_pagamento']) : map['status_pagamento'],
+      codMoip: map['cod_moip'] is String ? int.parse(map['cod_moip']) : map['cod_moip'],
+      formaPagamento: map['forma_pagamento'] is String ? int.parse(map['forma_pagamento']) : map['forma_pagamento'],
       tipoPagamento: map['tipo_pagamento'],
       emailConsumidor: map['email_consumidor'],
     );
@@ -149,14 +143,13 @@ class WirecardWebhookTransactionModel {
   factory WirecardWebhookTransactionModel.fromJson(String source) => WirecardWebhookTransactionModel.fromMap(json.decode(source));
 
   String toQuery() => toMap().entries.where((e) => e.value != null).map((e) => '${e.key}=${e.value}').join('&');
-  factory WirecardWebhookTransactionModel.fromQuery(String source) => WirecardWebhookTransactionModel.fromMap(
-        Map.fromEntries(
-          source.split('&').map((value) {
-            final splittedValues = value.split('=');
-            return MapEntry(splittedValues.first, splittedValues.last);
-          }),
-        ),
-      );
+  factory WirecardWebhookTransactionModel.fromQuery(String source) {
+    final entries = source.split('&').map((value) {
+      final splittedValues = value.split('=');
+      return MapEntry<String, dynamic>(splittedValues.first, splittedValues.last);
+    });
+    return WirecardWebhookTransactionModel.fromMap(Map.fromEntries(entries));
+  }
 
   @override
   String toString() {
