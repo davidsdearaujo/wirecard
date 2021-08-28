@@ -113,7 +113,7 @@ class WirecardWebhookTransactionModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'id_transacao': idTransacao,
+      'id_transacao': idTransacao?.replaceAll('-', ''),
       'valor': valor,
       'status_pagamento': statusPagamento,
       'cod_moip': codMoip,
@@ -124,8 +124,18 @@ class WirecardWebhookTransactionModel {
   }
 
   factory WirecardWebhookTransactionModel.fromMap(Map<String, dynamic> map) {
+    String? idTransacao;
+    if (map.containsKey('id_transacao')) {
+      final parts = <String>[];
+      parts.add(map['id_transacao'].substring(0, 8));
+      parts.add(map['id_transacao'].substring(8, 12));
+      parts.add(map['id_transacao'].substring(12, 16));
+      parts.add(map['id_transacao'].substring(16));
+      idTransacao = parts.join('-');
+    }
+
     return WirecardWebhookTransactionModel(
-      idTransacao: map['id_transacao'],
+      idTransacao: idTransacao,
       valor: map['valor'],
       statusPagamento: map['status_pagamento'],
       codMoip: map['cod_moip'],

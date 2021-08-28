@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'uuid_model.dart';
 import 'wirecard_pagador_model.dart';
 
 ///### Para integrar o Wirecard com seu site, tudo o que você deve fazer é enviar esses dados ao MoIP, através de um POST HTML, para o endereço
@@ -18,7 +19,7 @@ class WirecardRequestTransactionModel {
   final String descricao;
 
   ///Identificador único da transação gerado pelo seu site
-  final String idTransacao;
+  final UuidModel idTransacao;
 
   ///Se o pagamento deve ter um frete adicionado ao valor total a ser pago
   ///
@@ -46,7 +47,7 @@ class WirecardRequestTransactionModel {
     int? valor,
     String? nome,
     String? descricao,
-    String? idTransacao,
+    UuidModel? idTransacao,
     int? frete,
     int? pesoCompra,
     WirecardPagadorModel? pagador,
@@ -69,7 +70,7 @@ class WirecardRequestTransactionModel {
       'valor': valor,
       'nome': nome,
       'descricao': descricao,
-      'id_transacao': idTransacao,
+      'id_transacao': idTransacao.toMap(),
       'frete': frete,
       'peso_compra': pesoCompra,
       if (pagador != null) ...pagador!.toMap(),
@@ -82,7 +83,7 @@ class WirecardRequestTransactionModel {
       valor: map['valor'],
       nome: map['nome'],
       descricao: map['descricao'],
-      idTransacao: map['id_transacao'],
+      idTransacao: UuidModel.fromMap(map['id_transacao']),
       frete: map['frete'],
       pesoCompra: map['peso_compra'],
       pagador: WirecardPagadorModel.fromMap(map),
